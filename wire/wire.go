@@ -1,4 +1,4 @@
-package component
+package wire
 
 type Wire struct {
 	Pins []*Pin

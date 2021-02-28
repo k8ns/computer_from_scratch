@@ -1,9 +1,24 @@
-package component
+package wire
 
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+type JoinComponent struct {
+	I *Pin
+	O *Pin
+}
+
+func NewJoinComponent() *JoinComponent {
+	c := &JoinComponent{I: &Pin{}, O: &Pin{}}
+	c.I.Component = c
+	return c
+}
+
+func (g *JoinComponent) Update() {
+	g.O.Voltage(g.I.State)
+}
 
 func TestCanWirePointToPoint(t *testing.T) {
 	in := &Pin{}
@@ -81,30 +96,13 @@ func TestCanWireMultipleInsAndOuts(t *testing.T) {
 
 func TestTwoComponentsCanBeWiredUp(t *testing.T) {
 
-	gate1 := NewNANDGate()
-	gate2 := NewNANDGate()
+	gate1 := NewJoinComponent()
+	gate2 := NewJoinComponent()
 
-	Connect(gate1.O, gate2.A, gate2.B)
+	Connect(gate1.O, gate2.I)
 
-	gate1.A.Voltage(true)
-	gate1.B.Voltage(true)
-
+	gate1.I.Voltage(true)
 	assert.True(t, gate2.O.State)
-}
-
-type JoinComponent struct {
-	I *Pin
-	O *Pin
-}
-
-func NewJoinComponent() *JoinComponent {
-	c := &JoinComponent{I: &Pin{}, O: &Pin{}}
-	c.I.Component = c
-	return c
-}
-
-func (g *JoinComponent) Update() {
-	g.O.Voltage(g.I.State)
 }
 
 func TestMultipleComponentsCanBeWiredUp(t *testing.T) {
@@ -121,5 +119,4 @@ func TestMultipleComponentsCanBeWiredUp(t *testing.T) {
 	Connect(c4.O, c5.I)
 	assert.True(t, c5.O.State)
 	assert.True(t, c4.O.State)
-
 }

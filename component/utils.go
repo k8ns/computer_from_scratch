@@ -2,18 +2,6 @@ package component
 
 import "strings"
 
-type Component interface {
-	Update()
-}
-
-func Connect(pins ...*Pin) {
-	w := &Wire{}
-	for _, p := range pins {
-		w.Add(p)
-	}
-	w.Update()
-}
-
 func ByteToString(bits []bool) string {
 	bitsStr := make([]string, 0)
 	for _, bit := range bits {

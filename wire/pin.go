@@ -1,29 +1,10 @@
-package component
-
-import "fmt"
+package wire
 
 type Pin struct {
 	VoltageSupply bool
 	State         bool
 	Wire          *Wire
 	Component     Component
-}
-
-func (i *Pin) String() string {
-	s := 0
-	if i.State {
-		s = 1
-	}
-	v := 0
-	if i.VoltageSupply {
-		v = 1
-	}
-
-	if i.VoltageSupply {
-		return fmt.Sprintf("%d%d", s, v)
-	}
-
-	return fmt.Sprintf("%d", s)
 }
 
 func (i *Pin) Voltage(s bool) {
@@ -42,6 +23,9 @@ func (i *Pin) Update(s bool) {
 	}
 
 	if i.Component != nil {
-		i.Component.Update()
+		if x, ok := i.Component.(interface{ Update()}); ok {
+			x.Update()
+		}
 	}
 }
+
